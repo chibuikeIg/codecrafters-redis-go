@@ -38,7 +38,6 @@ func readMultipleCommands(conn net.Conn) {
 		for {
 
 			// copied from solutions
-
 			buf := make([]byte, 1024)
 			len, err := conn.Read(buf)
 
@@ -58,6 +57,8 @@ func readMultipleCommands(conn net.Conn) {
 		}
 
 	}(conn)
+
+	conn.Write([]byte("+PONG\r\n"))
 
 	defer conn.Close()
 }
