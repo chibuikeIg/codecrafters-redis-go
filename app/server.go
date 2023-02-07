@@ -29,7 +29,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	readMultipleCommands(conn)
+	go readMultipleCommands(conn)
 
 }
 
@@ -37,9 +37,13 @@ func readMultipleCommands(conn net.Conn) {
 
 	scanner := bufio.NewScanner(conn)
 
-	for scanner.Scan() {
-		io.WriteString(conn, "+PONG\r\n")
-	}
+	go func(net.Conn) {
 
-	conn.Close()
+		for scanner.Scan() {
+			io.WriteString(conn, "+PONG\r\n")
+		}
+
+	}(conn)
+
+	defer conn.Close()
 }
