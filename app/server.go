@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"net"
 	"os"
 	// Uncomment this block to pass the first stage
@@ -35,12 +33,28 @@ func main() {
 
 func readMultipleCommands(conn net.Conn) {
 
-	scanner := bufio.NewScanner(conn)
-
 	go func(net.Conn) {
 
-		for scanner.Scan() {
-			io.WriteString(conn, "+PONG\r\n")
+		for {
+
+			// copied from solutions
+
+			buf := make([]byte, 1024)
+			len, err := conn.Read(buf)
+
+			if err != nil {
+				fmt.Printf("Error reading: %#v\n", err)
+				return
+			}
+
+			if len == 0 {
+				fmt.Println("Connection Closed")
+				return
+			}
+
+			fmt.Printf("Message received: %s\n", string(buf[:len]))
+
+			conn.Write([]byte("+PONG\r\n"))
 		}
 
 	}(conn)
