@@ -29,9 +29,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	io.WriteString(conn, "+PONG\r\n")
+	readMultipleCommands(conn)
 
-	go readMultipleCommands(conn)
+	io.WriteString(conn, "+PONG\r\n")
 
 }
 
