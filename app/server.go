@@ -33,28 +33,25 @@ func main() {
 
 func readMultipleCommands(conn net.Conn) {
 
-	go func(net.Conn) {
+	defer conn.Close()
 
-		for {
+	for {
 
-			// copied from solutions
-			buf := make([]byte, 1024)
-			len, err := conn.Read(buf)
+		// copied from solutions
+		buf := make([]byte, 1024)
+		len, err := conn.Read(buf)
 
-			if err != nil {
-				fmt.Printf("Error reading: %#v\n", err)
-				return
-			}
-
-			if len == 0 {
-				fmt.Println("Connection Closed")
-				return
-			}
-
-			conn.Write([]byte("+PONG\r\n"))
+		if err != nil {
+			fmt.Printf("Error reading: %#v\n", err)
+			return
 		}
 
-	}(conn)
+		if len == 0 {
+			fmt.Println("Connection Closed")
+			return
+		}
 
-	defer conn.Close()
+		conn.Write([]byte("+PONG\r\n"))
+	}
+
 }
