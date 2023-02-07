@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	// Uncomment this block to pass the first stage
@@ -28,6 +29,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	io.WriteString(conn, "+PONG\r\n")
+
 	readMultipleCommands(conn)
 
 }
@@ -37,8 +40,9 @@ func readMultipleCommands(conn net.Conn) {
 	scanner := bufio.NewScanner(conn)
 
 	for scanner.Scan() {
+		ln := scanner.Text()
 
-		fmt.Fprintf(conn, "+%s\r\n", "PONG")
+		fmt.Fprintf(conn, "+%s\r\n", ln)
 	}
 
 	conn.Close()
