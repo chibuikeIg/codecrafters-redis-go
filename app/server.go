@@ -38,7 +38,7 @@ func readMultipleCommands(conn net.Conn) {
 
 	for scanner.Scan() {
 
-		fmt.Fprintf(conn, "++%s\r\n", "PONG")
+		fmt.Fprintf(conn, "+%s\r\n", "PONG")
 	}
 
 	conn.Close()
