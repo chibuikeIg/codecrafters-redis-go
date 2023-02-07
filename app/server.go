@@ -31,7 +31,7 @@ func main() {
 
 	io.WriteString(conn, "+PONG\r\n")
 
-	readMultipleCommands(conn)
+	go readMultipleCommands(conn)
 
 }
 
