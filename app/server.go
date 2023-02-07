@@ -51,14 +51,10 @@ func readMultipleCommands(conn net.Conn) {
 				return
 			}
 
-			fmt.Printf("Message received: %s\n", string(buf[:len]))
-
 			conn.Write([]byte("+PONG\r\n"))
 		}
 
 	}(conn)
-
-	conn.Write([]byte("+PONG\r\n"))
 
 	defer conn.Close()
 }
