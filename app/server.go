@@ -40,9 +40,8 @@ func readMultipleCommands(conn net.Conn) {
 	scanner := bufio.NewScanner(conn)
 
 	for scanner.Scan() {
+		io.WriteString(conn, "+PONG\r\n")
 	}
-
-	fmt.Fprintf(conn, "+%s\r\n", "PONG")
 
 	conn.Close()
 }
