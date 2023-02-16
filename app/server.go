@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	// Uncomment this block to pass the first stage
@@ -39,22 +42,28 @@ func readMultipleCommands(conn net.Conn) {
 	defer conn.Close()
 
 	for {
+		value, err := DecodeRESP(bufio.NewReader(conn))
 
-		// copied from solutions
-		buf := make([]byte, 1024)
-		len, err := conn.Read(buf)
+		if errors.Is(err, io.EOF) {
+			break
+		}
 
 		if err != nil {
-			fmt.Printf("Error reading: %#v\n", err)
+			fmt.Println("Error decoding RESP :", err.Error())
 			return
 		}
 
-		if len == 0 {
-			fmt.Println("Connection Closed")
-			return
-		}
+		command := value.Array()[0].String()
+		args := value.Array()[1:]
 
-		conn.Write([]byte("+PONG\r\n"))
+		switch command {
+		case "ping":
+			conn.Write([]byte("+PONG\r\n"))
+		case "echo":
+			conn.Write([]byte(fmt.Sprintf("$%d\r\n%s\r\n", len(args[0].String()), args[0].String())))
+		default:
+			conn.Write([]byte("-ERR unknown command '" + command + "'\r\n"))
+		}
 	}
 
 }
